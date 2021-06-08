@@ -1,34 +1,20 @@
 import numpy as np
 import math
-from numpy.polynomial import Polynomial as PowSer
 
-def get_l_poly_part(k, xi):
-    '''
-    Get the k-th polynomial with zeros at the other xis
-    '''
-    interps = len(xi)
-    l = np.zeros(interps+1)
-    l[0] = 1
-    for j in range (interps):
-        if j!=k:
-            l=l*(-xi[j]/(xi[k]-xi[j]))+np.roll(l,1)/(xi[k]-xi[j])
-    return l
+def L(k,xi,x):
+    "k-tes Lagrange Basispolynom zu den Stützstellen xi"
+    Lx = 1.
+    for j in range(len(xi)):
+        if j != k:
+            Lx *= (x-xi[j])/(xi[k]-xi[j])
+    return Lx
 
-def L(k, xi, x):
-    '''
-    Get the y-value at x of the k-th polynomial thourgh interpolation points k.
-    '''
-    return PowSer(get_l_poly_part(k, xi))(x)
-
-def pLagr(xi,fi):
-    '''
-    Get the full Lagrange-polynomial, interpolating at xi and f(xi)
-    '''
-    interps = len(fi)
-    l = np.zeros(interps+1)
-    for xIndex in range(interps):
-        l += fi[xIndex]*get_l_poly_part(xIndex, xi)
-    return PowSer(l)
+def pLagr(xi,fi,x):
+    "Lagrange Interpolationspolynom zu den Stützstellen xi mit Stützwerten fi"
+    px = 0.
+    for j in range(len(xi)):
+        px += fi[j]*L(j,xi,x)
+    return px
 
 def divided_diff(x, y):
     '''

@@ -1,4 +1,3 @@
-import numpy as np
 import numerikLib
 import matplotlib.pyplot as plt
 from numpy.core.function_base import linspace

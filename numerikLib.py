@@ -46,6 +46,6 @@ def make_cheb_xi(a:int,b:int,n:int):
     '''
     center = .5*(a+b)
     offset = .5*(b-a)
-    for i in range (n):
+    for i in range(n+1):
         multiplier = math.cos(((2*i+1)/(2*n+2))*math.pi)
         yield center + offset * multiplier 

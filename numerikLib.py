@@ -1,6 +1,9 @@
 import numpy as np
 import math
 
+def runge_func(x):
+    return 1. / (1. + x**2)
+
 def L(k,xi,x):
     "k-tes Lagrange Basispolynom zu den Stützstellen xi"
     Lx = 1.
@@ -49,3 +52,59 @@ def make_cheb_xi(a:int,b:int,n:int):
     for i in range(n+1):
         multiplier = math.cos(((2*i+1)/(2*n+2))*math.pi)
         yield center + offset * multiplier 
+
+def solve_moments(h, f):
+    '''
+    Solve moments with natural borders
+    '''
+    linequation = np.zeros((len(h)+1,len(h)+1))
+    rightside = np.zeros(len(h)+1)
+    offset = 1
+    for i in range(1,len(h)):
+        li = 0
+        hi = h[i-1]
+        hip = h[i]
+        linequation[i][offset] = 2
+        li = hip/(hi+hip)
+        di = 6/(hi+hip) * ( (f[i+1]-f[i])/hip - (f[i]-f[i-1])/hi )
+        linequation[i][offset+1] = li
+        linequation[i][offset-1] = 1-li
+        rightside[i] = di
+        offset += 1
+    linequation[0][0] = 2
+    linequation[0][1] = 0
+    linequation[-1][-1] = 2
+    linequation[-1][-2] = 0
+    return np.linalg.solve(linequation, rightside)
+
+def solve_moments2(h, f):
+    '''
+    Solve moments with exercise07's borders
+    '''
+    linequation = np.zeros((len(h)+1,len(h)+1))
+    rightside = np.zeros(len(h)+1)
+    offset = 1
+    for i in range(1,len(h)):
+        li = 0
+        hi = h[i-1]
+        hip = h[i]
+        linequation[i][offset] = 2
+        li = hip/(hi+hip)
+        di = 6/(hi+hip) * ( (f[i+1]-f[i])/hip - (f[i]-f[i-1])/hi )
+        linequation[i][offset+1] = li
+        linequation[i][offset-1] = 1-li
+        rightside[i] = di
+        offset += 1
+    mborder = 6/(h[-1]+h[0])*((f[0]-f[-1])/h[0] - (f[-1]-f[-2])/h[-1])
+    linequation[0][0] = 2
+    linequation[0][1] = mborder
+    linequation[-1][-1] = 2
+    linequation[-1][-2] = mborder
+    return np.linalg.solve(linequation, rightside)
+
+def s_i(mi, fi, hi, i):
+    a0, a2 = fi[i+1], mi[i+1]/2
+    a1 = (fi[i+1]-fi[i])/hi[i] + ( hi[i] * (2.0*mi[i+1] + mi[i]) )/6.0
+    a3 = (mi[i+1] - mi[i]) / (6*hi[i])
+    poly = np.polynomial.Polynomial((a0, a1, a2, a3))
+    return poly

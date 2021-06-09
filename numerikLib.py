@@ -77,7 +77,7 @@ def solve_moments(h, f):
     linequation[-1][-2] = 0
     return np.linalg.solve(linequation, rightside)
 
-def solve_moments2(h, f):
+def solve_moments2(h, f, derivf0, derivfn):
     '''
     Solve moments with exercise07's borders
     '''
@@ -95,11 +95,17 @@ def solve_moments2(h, f):
         linequation[i][offset-1] = 1-li
         rightside[i] = di
         offset += 1
-    mborder = 6/(h[-1]+h[0])*((f[0]-f[-1])/h[0] - (f[-1]-f[-2])/h[-1])
+    d0 = (6/h[0])*((f[1]-f[0])/h[0]-derivf0)
+    dn = (6/h[-1])*(derivfn - (f[-1]-f[-2])/h[-1])
+    rightside[0] = d0
+    rightside[-1] = dn
+    #mborder = 6/(h[-1]+h[0])*((f[0]-f[-1])/h[0] - (f[-1]-f[-2])/h[-1])
     linequation[0][0] = 2
-    linequation[0][1] = mborder
+    linequation[0][1] = 1
     linequation[-1][-1] = 2
-    linequation[-1][-2] = mborder
+    linequation[-1][-2] = 1
+    print(linequation)
+    print("=")
     return np.linalg.solve(linequation, rightside)
 
 def s_i(mi, fi, hi, i):

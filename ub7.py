@@ -9,7 +9,7 @@ a = 0.
 b = 2.*np.pi
 
 ALPHA = 1
-KAPPA = 2
+KAPPA = 4
 
 def func1(t):
     return ALPHA*math.cos(KAPPA*t)*math.cos(t)
@@ -28,8 +28,8 @@ for i in range(7,n):
     yvals1 = [func1(x) for x in xvals]
     yvals2 = [func2(x) for x in xvals]
 
-    moments1 = numerikLib.solve_moments2(intervalsize, interppointsy1)
-    moments2 = numerikLib.solve_moments2(intervalsize, interppointsy2)
+    moments1 = numerikLib.solve_moments2(intervalsize, interppointsy1, 0, 0)
+    moments2 = numerikLib.solve_moments2(intervalsize, interppointsy2, 1, 1)
     interppolys1 = [numerikLib.s_i(moments1, interppointsy1, intervalsize, k) for k in range(i)]
     interppolys2 = [numerikLib.s_i(moments2, interppointsy2, intervalsize, k) for k in range(i)]
 
@@ -41,8 +41,11 @@ for i in range(7,n):
         poly2 = interppolys2[pindex]
         _xvals = np.linspace(interppointsx[pindex], interppointsx[pindex+1], 30)
         xshift = np.linspace(-intervalsize[pindex], 0, 30)
-        plt.plot(_xvals, poly1(xshift), '-.', color=[1, 1-.3*(i-7),0])
-        plt.plot(_xvals, poly2(xshift), '-.', color=[0, .6, .3*(i-7)])
+        y1 = poly1(xshift)
+        y2 = poly2(xshift)
+        plt.plot(_xvals, y1, '-.', color=[1, 1-.3*(i-7),0])
+        plt.plot(y1, y2, '-', color=[.3*(i-7), .3*(i-7), .3*(i-7)])
+        plt.plot(_xvals, y2, '-.', color=[0, .6, .3*(i-7)])
 
 plt.plot(xvals, yvals1, color=[1,0,0])
 plt.plot(xvals, yvals2, color=[0,0,1])
